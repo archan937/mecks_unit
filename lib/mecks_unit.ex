@@ -28,6 +28,7 @@ defmodule MecksUnit do
     quote do
       fn func ->
         :meck.expect(unquote(module), unquote(name), fn unquote_splicing(arguments) ->
+
           arguments = [unquote_splicing(arguments)]
           passthrough = fn(arguments) ->
             :meck.passthrough(arguments)
@@ -47,6 +48,7 @@ defmodule MecksUnit do
           else
             passthrough.(arguments)
           end
+
         end)
       end
     end
