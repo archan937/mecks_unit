@@ -12,11 +12,7 @@ defmodule MecksUnit do
   defp map_functions(spec) do
     Enum.reduce(spec, [], fn {mock_env, functions}, acc ->
       Enum.reduce(functions, acc, fn {name, func}, acc ->
-        arity =
-          func
-          |> Function.info()
-          |> Keyword.get(:arity)
-
+        arity = :erlang.fun_info(func)[:arity]
         acc ++ [{mock_env, name, arity, func}]
       end)
     end)
