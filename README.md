@@ -26,12 +26,19 @@ Mocking module functions is pretty straightforward and done as follows:
   4. Enjoy ;)
 
 Please note that the defined mock modules only apply to the first `mocked_test` encountered. So they are isolated.
+Also, non-matching function heads within the mock module will result in invoking the original module function as well.
 
 ### An example
 
 The following is a working example defined in [test/mecks_unit_test.exs](https://github.com/archan937/mecks_unit/blob/master/test/mecks_unit_test.exs)
 
   ```elixir
+  defmodule Foo do
+    def trim(string) do
+      String.trim(string)
+    end
+  end
+
   defmodule MecksUnitTest do
     use ExUnit.Case, async: true
     use MecksUnit.Case
@@ -51,6 +58,7 @@ The following is a working example defined in [test/mecks_unit_test.exs](https:/
       task =
         Task.async(fn ->
           assert "Engel" == String.trim("  Paul  ")
+          assert "Engel" == Foo.trim("  Paul  ")
           assert "Bar" == String.trim("  Foo  ", "!")
           assert "  Surprise!  " == String.trim("  Paul  ", "!")
           assert "MecksUnit" == String.trim("  MecksUnit  ")
@@ -68,6 +76,7 @@ The following is a working example defined in [test/mecks_unit_test.exs](https:/
       task =
         Task.async(fn ->
           assert "Paul" == String.trim("  Paul  ")
+          assert "Paul" == Foo.trim("  Paul  ")
           assert "  Foo  " == String.trim("  Foo  ", "!")
           assert "  Paul  " == String.trim("  Paul  ", "!")
           assert "MecksUnit" == String.trim("  MecksUnit  ")
