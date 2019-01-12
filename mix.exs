@@ -9,7 +9,13 @@ defmodule MecksUnit.MixProject do
       start_permanent: Mix.env() == :prod,
       deps: deps(),
       description: description(),
-      package: package()
+      package: package(),
+      name: "MecksUnit",
+      source_url: "https://github.com/archan937/mecks_unit",
+      docs: [
+        main: "readme",
+        extras: ["README.md"]
+      ]
     ]
   end
 
@@ -22,7 +28,8 @@ defmodule MecksUnit.MixProject do
 
   defp deps do
     [
-      {:meck, "~> 0.8.8"}
+      {:meck, "~> 0.8.8"},
+      {:ex_doc, "~> 0.18.0", only: :dev, runtime: false}
     ]
   end
 
@@ -34,7 +41,6 @@ defmodule MecksUnit.MixProject do
 
   defp package do
     [
-      name: "MecksUnit",
       maintainers: ["Paul Engel"],
       licenses: ["MIT"],
       links: %{github: "https://github.com/archan937/mecks_unit"}
