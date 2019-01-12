@@ -1,6 +1,6 @@
 # MecksUnit
 
-A simple Elixir package to mock functions within (asynchronous) ExUnit tests using Erlang's `:meck` library
+A simple Elixir package to elegantly mock module functions within (asynchronous) ExUnit tests using Erlang's `:meck` library
 
 ## Installation
 
@@ -25,7 +25,8 @@ Mocking module functions is pretty straightforward and done as follows:
   3. Use `mocked_test` as if you would define a normal ExUnit `test` after having defined all the required mock modules
   4. Enjoy ;)
 
-Please note that the defined mock modules only apply to the first `mocked_test` encountered. So they are isolated.
+Please note that the defined mock modules only apply to the first `mocked_test` encountered.
+So they are isolated (despite of `:meck` having an unfortunate global effect) as MecksUnit takes care of it.
 Also, non-matching function heads within the mock module will result in invoking the original module function as well.
 
 ### An example
