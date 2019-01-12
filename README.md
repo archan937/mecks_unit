@@ -1,6 +1,6 @@
 # MecksUnit
 
-A simple Elixir package to mock functions within ExUnit tests using Erlang's `:meck` library
+A simple Elixir package to mock functions within (asynchronous) ExUnit tests using Erlang's `:meck` library
 
 ## Installation
 

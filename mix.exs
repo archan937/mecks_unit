@@ -28,12 +28,13 @@ defmodule MecksUnit.MixProject do
 
   defp description do
     """
-    A simple Elixir package to mock functions within ExUnit tests using Erlang's :meck library
+    A simple Elixir package to mock functions within (asynchronous) ExUnit tests using Erlang's :meck library
     """
   end
 
   defp package do
     [
+      name: "MecksUnit",
       maintainers: ["Paul Engel"],
       licenses: ["MIT"],
       links: %{github: "https://github.com/archan937/mecks_unit"}
