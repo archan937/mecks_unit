@@ -7,9 +7,9 @@ defmodule MecksUnit.Case do
     end
   end
 
-  defmacro defmock({_alias, _meta, [name]}, do: block) do
+  defmacro defmock({_alias, _meta, name}, do: block) do
     quote do
-      name = Module.concat(Enum.join([__MODULE__, @mock_index]), unquote(name))
+      name = Module.concat([Enum.join([__MODULE__, @mock_index]), unquote_splicing(List.wrap(name))])
       block = unquote(Macro.escape(block))
       @mocks {name, block}
     end
@@ -56,12 +56,17 @@ defmodule MecksUnit.Case do
 
   defp to_mock_function(module, func, arity) do
     arguments = Macro.generate_arguments(arity, :Elixir)
+    module =
+      case module do
+        [_head | _tail] = module -> module
+        module -> [module]
+      end
 
     quote do
       fn unquote_splicing(arguments) ->
 
         mock_env = MecksUnit.Server.running(self())
-        mock_module = Module.concat(mock_env, unquote(module))
+        mock_module = Module.concat([mock_env, unquote_splicing(module)])
 
         arguments = [unquote_splicing(arguments)]
         passthrough = fn(arguments) ->
