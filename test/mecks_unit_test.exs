@@ -1,9 +1,19 @@
 defmodule MecksUnitTest do
   use ExUnit.Case, async: true
+  use MecksUnit.Case
 
-  import MecksUnit.Case
+  defmock String do
+    def trim("  Paul  "), do: "Engel"
+    def trim("  Foo  ", "!"), do: "Bar"
+    def trim(_, "!"), do: {:passthrough, ["  Surprise!  !!!!", "!"]}
+    def trim(_, _), do: :passthrough
+  end
 
-  mocked_test :mocking_demo, "using mocked module functions" do
+  defmock List do
+    def wrap(:foo), do: [1, 2, 3, 4]
+  end
+
+  mocked_test "using mocked module functions" do
     task =
       Task.async(fn ->
         assert "Engel" == String.trim("  Paul  ")

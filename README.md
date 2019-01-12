@@ -11,68 +11,43 @@ To install MecksUnit, please do the following:
       ```elixir
       def deps do
         [
-          {:mecks_unit, "~> 0.1.0", git: "https://github.com/archan937/mecks_unit.git", only: :test}
+          {:mecks_unit, "~> 0.1.0", only: :test}
         ]
       end
       ```
 
 ## Usage
 
-### Define mocked functions
+Mocking module functions is pretty straightforward and done as follows:
 
-For defining mocked module functions, you need to define them in your `test/test_helper.exs` and writing
-them is pretty straightforward:
+  1. Add `use MecksUnit.Case` at the beginning of your test file
+  2. Use `defmock` as if you would define the original module with `defmodule` containing mocked functions
+  3. Use `mocked_test` as if you would define a normal ExUnit `test` after having defined all the required mock modules
+  4. Enjoy ;)
 
-  ```elixir
-  ExUnit.start()
+Please note that the defined mock modules only apply to the first `mocked_test` encountered. So they are isolated.
 
-  import MecksUnit
+### An example
 
-  defmock String, [
-    mocking_demo: [
-      trim: fn
-        "  Paul  " ->
-          "Engel"
-      end,
-      trim: fn
-        "  Foo  ", "!" ->
-          "Bar"
-        _, to_trim ->
-          case to_trim do
-            "!" ->
-              {:passthrough, ["  Surprise!  !!!!", "!"]}
-            _ ->
-              :passthrough
-          end
-      end
-    ]
-  ]
-
-  defmock List, [
-    mocking_demo: [
-      wrap: fn
-        :foo ->
-          [1, 2, 3, 4]
-      end
-    ]
-  ]
-  ```
-
-MecksUnit uses so called "mock environments" (`mock_env`) to distinct whether or not apply the mocked function.
-In this case, the mock environment is `:mocking_demo`. You need to pattern match function heads in order to override.
-
-When wanting to delegate to the original implementation either return `:passthrough` (which passes on the original arguments)
-or return a tuple `{:passthrough, arguments}` in which you can override the used arguments yourself.
-
-### Start using the mocked module functions within tests
+The following is a working example defined in [test/mecks_unit_test.exs](https://github.com/archan937/mecks_unit/blob/master/test/mecks_unit_test.exs)
 
   ```elixir
-  defmodule MyAwesomeTest do
+  defmodule MecksUnitTest do
     use ExUnit.Case, async: true
+    use MecksUnit.Case
 
-    import MecksUnit.Case
+    defmock String do
+      def trim("  Paul  "), do: "Engel"
+      def trim("  Foo  ", "!"), do: "Bar"
+      def trim(_, "!"), do: {:passthrough, ["  Surprise!  !!!!", "!"]}
+      def trim(_, _), do: :passthrough
+    end
 
-    mocked_test :mocking_demo, "using mocked module functions" do
+    defmock List do
+      def wrap(:foo), do: [1, 2, 3, 4]
+    end
+
+    mocked_test "using mocked module functions" do
       task =
         Task.async(fn ->
           assert "Engel" == String.trim("  Paul  ")
@@ -107,6 +82,13 @@ or return a tuple `{:passthrough, arguments}` in which you can override the used
     end
   end
   ```
+
+Please note that you can delegate to the original implementation by either returning `:passthrough` (which forwards the given arguments)
+or return a tuple `{:passthrough, arguments}` in which you can alter the arguments yourself.
+
+## Asynchronous testing
+
+Unlike [Mock](https://github.com/jjh42/mock), MecksUnit supports running mocked tests asynchronously. W00t! ^^
 
 ## License
 
