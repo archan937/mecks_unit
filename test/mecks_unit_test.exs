@@ -54,4 +54,32 @@ defmodule MecksUnitTest do
 
     Task.await(task)
   end
+
+  defmock String do
+    def trim("  Paul  "), do: "PAUL :)"
+  end
+
+  defmock List do
+    def wrap([1, 2, 3, 4]), do: [5, 6, 7, 8]
+    def wrap(nil), do: ~w(Surprise)
+  end
+
+  mocked_test "second time using different mocked module functions" do
+    task =
+      Task.async(fn ->
+        assert "PAUL :)" == String.trim("  Paul  ")
+        assert "PAUL :)" == Foo.trim("  Paul  ")
+        assert "  Foo  " == String.trim("  Foo  ", "!")
+        assert "  Paul  " == String.trim("  Paul  ", "!")
+        assert "MecksUnit" == String.trim("  MecksUnit  ")
+        assert "Paul Engel" == String.trim("  Paul Engel  ", " ")
+        assert [:foo] == List.wrap(:foo)
+        assert ["Surprise"] == List.wrap(nil)
+        assert [:bar] == List.wrap(:bar)
+        assert [:foo, :bar] == List.wrap([:foo, :bar])
+        assert [5, 6, 7, 8] == List.wrap([1, 2, 3, 4])
+      end)
+
+    Task.await(task)
+  end
 end
