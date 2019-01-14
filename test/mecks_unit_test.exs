@@ -32,6 +32,7 @@ defmodule MecksUnitTest do
         assert [] == List.wrap(nil)
         assert [:bar] == List.wrap(:bar)
         assert [:foo, :bar] == List.wrap([:foo, :bar])
+        assert called List.wrap(:foo)
       end)
 
     Task.await(task)
@@ -78,6 +79,7 @@ defmodule MecksUnitTest do
         assert [:bar] == List.wrap(:bar)
         assert [:foo, :bar] == List.wrap([:foo, :bar])
         assert [5, 6, 7, 8] == List.wrap([1, 2, 3, 4])
+        assert_called String.trim(_)
       end)
 
     Task.await(task)

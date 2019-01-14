@@ -11,7 +11,7 @@ To install MecksUnit, please do the following:
       ```elixir
       def deps do
         [
-          {:mecks_unit, "~> 0.1.0", only: :test}
+          {:mecks_unit, "~> 0.1.2", only: :test}
         ]
       end
       ```
@@ -28,6 +28,9 @@ Mocking module functions is pretty straightforward and done as follows:
 Please note that the defined mock modules only apply to the first `mocked_test` encountered.
 So they are isolated (despite of `:meck` having an unfortunate global effect) as MecksUnit takes care of it.
 Also, non-matching function heads within the mock module will result in invoking the original module function as well.
+
+As of version `0.1.2`, you can assert function calls using `called` (returns a boolean) or `assert_called` (raises an
+error when not having found a match) within your test block. Use `_` to match any argument as if you would pattern match.
 
 ### An example
 
@@ -68,6 +71,8 @@ The following is a working example defined in [test/mecks_unit_test.exs](https:/
           assert [] == List.wrap(nil)
           assert [:bar] == List.wrap(:bar)
           assert [:foo, :bar] == List.wrap([:foo, :bar])
+          assert called List.wrap(:foo)
+          assert_called String.trim(_)
         end)
 
       Task.await(task)
