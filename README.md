@@ -11,7 +11,7 @@ To install MecksUnit, please do the following:
       ```elixir
       def deps do
         [
-          {:mecks_unit, "~> 0.1.2", only: :test}
+          {:mecks_unit, "~> 0.1.3", only: :test}
         ]
       end
       ```
@@ -23,7 +23,8 @@ Mocking module functions is pretty straightforward and done as follows:
   1. Add `use MecksUnit.Case` at the beginning of your test file
   2. Use `defmock` as if you would define the original module with `defmodule` containing mocked functions
   3. Use `mocked_test` as if you would define a normal ExUnit `test` after having defined all the required mock modules
-  4. Enjoy ;)
+  4. Add `MecksUnit.mock()` in your `test/test_helper.exs` file
+  5. Enjoy ;)
 
 Please note that the defined mock modules only apply to the first `mocked_test` encountered.
 So they are isolated (despite of `:meck` having an unfortunate global effect) as MecksUnit takes care of it.
@@ -32,11 +33,23 @@ Also, non-matching function heads within the mock module will result in invoking
 As of version `0.1.2`, you can assert function calls using `called` (returns a boolean) or `assert_called` (raises an
 error when not having found a match) within your test block. Use `_` to match any argument as if you would pattern match.
 
+Prior to version `0.1.3`, you would very often get `:meck`-related compile errors when using MecksUnit in multiple test files.
+From that version on, this problem is solved. Happy testing! ^^
+
 ### An example
 
 The following is a working example defined in [test/mecks_unit_test.exs](https://github.com/archan937/mecks_unit/blob/master/test/mecks_unit_test.exs)
 
   ```elixir
+  # (in test/test_helper.exs)
+
+  ExUnit.start()
+  MecksUnit.mock()
+  ```
+
+  ```elixir
+  # (in test/mecks_unit_test.exs)
+
   defmodule Foo do
     def trim(string) do
       String.trim(string)

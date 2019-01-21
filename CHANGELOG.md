@@ -1,8 +1,12 @@
 ## MecksUnit CHANGELOG
 
+### Version 0.1.3 (January 21, 2019)
+
+* Solve `:meck`-related compile errors when using MecksUnit in multiple test files (yay! ^^)
+
 ### Version 0.1.2 (January 15, 2019)
 
-* Added `called` and `assert_called` to assert function calls within (asynchronous) tests
+* Add `called` and `assert_called` to assert function calls within (asynchronous) tests
 
 ### Version 0.1.1 (January 14, 2019) [RETIRED]
 
