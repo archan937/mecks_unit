@@ -1,6 +1,73 @@
 defmodule MecksUnit do
   @moduledoc false
 
+  def mock do
+    test_file_patterns()
+    |> Enum.map(fn pattern ->
+      pattern
+      |> Path.wildcard()
+      |> Enum.map(&extract_mock_modules/1)
+      |> List.flatten()
+      |> Enum.uniq()
+      |> mock_modules()
+    end)
+  end
+
+  defp test_file_patterns do
+    System.argv()
+    |> Enum.slice(1..-1)
+    |> case do
+      [] -> ["test/**/*.exs"]
+      patterns -> patterns
+    end
+    |> Enum.map(fn pattern ->
+      pattern = Regex.replace(~r/\.exs:\d*/, pattern, ".exs")
+      if String.contains?(pattern, ".exs") do
+        pattern
+      else
+        pattern <> "**/*.exs"
+      end
+    end)
+  end
+
+  defp extract_mock_modules("test/test_helper.exs"), do: []
+  defp extract_mock_modules(file) do
+    file
+    |> File.read!()
+    |> Code.string_to_quoted!()
+    |> Macro.traverse([], fn node, acc -> {node, acc} end, fn node, acc ->
+      case node do
+        {:defmock, _, [{:__aliases__, _meta, name}, [do: block]]} ->
+          mocked_functions =
+            name
+            |> Module.concat()
+            |> extract_mock_functions(block)
+          {node, acc ++ mocked_functions}
+        node ->
+          {node, acc}
+      end
+    end)
+    |> elem(1)
+  end
+
+  defp extract_mock_functions(module, {:__block__, [], ast}) do
+    extract_mock_functions(module, ast)
+  end
+  defp extract_mock_functions(module, ast) do
+    ast
+    |> List.wrap()
+    |> Enum.map(fn {:def, _, [{func, _meta, args} | _tail]} ->
+      {module, func, length(args)}
+    end)
+  end
+
+  defp mock_modules(modules) do
+    Enum.each(modules, fn {module, func, arity} ->
+      mock_function = to_mock_function(module, func, arity)
+      :meck.expect(module, func, mock_function)
+    end)
+  end
+
   def define_mocks(mocks, test_module, mock_index) do
     prefix = [Atom.to_string(test_module), mock_index, "."] |> Enum.join()
 
@@ -15,10 +82,6 @@ defmodule MecksUnit do
         IO.warn("Already defined mock module for #{original_module}")
       else
         Code.eval_quoted({:defmodule, [import: Kernel], [mock_module, [do: block]]})
-        Enum.each(mock_module.__info__(:functions), fn {func, arity} ->
-          mock_function = to_mock_function(original_module, func, arity)
-          :meck.expect(original_module, func, mock_function)
-        end)
       end
 
     end)
