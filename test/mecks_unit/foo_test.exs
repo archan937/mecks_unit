@@ -11,7 +11,7 @@ defmodule MecksUnit.FooTest do
       Task.async(fn ->
         assert [:foo, :bar] == List.wrap([:foo, :bar])
         assert ~w(MecksUnit Bar Test) == List.wrap(:foo_test)
-        assert called List.wrap(:foo_test)
+        assert called(List.wrap(:foo_test))
       end)
 
     Task.await(task)

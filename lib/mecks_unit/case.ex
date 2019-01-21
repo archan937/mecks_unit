@@ -9,7 +9,9 @@ defmodule MecksUnit.Case do
 
   defmacro defmock({_alias, _meta, name}, do: block) do
     quote do
-      name = Module.concat([Enum.join([__MODULE__, @mock_index]), unquote_splicing(List.wrap(name))])
+      name =
+        Module.concat([Enum.join([__MODULE__, @mock_index]), unquote_splicing(List.wrap(name))])
+
       block = unquote(Macro.escape(block))
       @mocks {name, block}
     end
@@ -39,7 +41,11 @@ defmodule MecksUnit.Case do
 
   defmacro assert_called({{:., _, [module, func]}, _, args}) do
     quote do
-      unless MecksUnit.called(unquote(module), unquote(func), unquote(replace_ignore_pattern(args))) do
+      unless MecksUnit.called(
+               unquote(module),
+               unquote(func),
+               unquote(replace_ignore_pattern(args))
+             ) do
         calls =
           unquote(module)
           |> MecksUnit.history(unquote(func))

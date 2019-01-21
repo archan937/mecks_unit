@@ -22,6 +22,7 @@ defmodule MecksUnit do
     end
     |> Enum.map(fn pattern ->
       pattern = Regex.replace(~r/\.exs:\d*/, pattern, ".exs")
+
       if String.contains?(pattern, ".exs") do
         pattern
       else
@@ -31,6 +32,7 @@ defmodule MecksUnit do
   end
 
   defp extract_mock_modules("test/test_helper.exs"), do: []
+
   defp extract_mock_modules(file) do
     file
     |> File.read!()
@@ -42,7 +44,9 @@ defmodule MecksUnit do
             name
             |> Module.concat()
             |> extract_mock_functions(block)
+
           {node, acc ++ mocked_functions}
+
         node ->
           {node, acc}
       end
@@ -53,6 +57,7 @@ defmodule MecksUnit do
   defp extract_mock_functions(module, {:__block__, [], ast}) do
     extract_mock_functions(module, ast)
   end
+
   defp extract_mock_functions(module, ast) do
     ast
     |> List.wrap()
@@ -83,12 +88,12 @@ defmodule MecksUnit do
       else
         Code.eval_quoted({:defmodule, [import: Kernel], [mock_module, [do: block]]})
       end
-
     end)
   end
 
   defp to_mock_function(module, func, arity) do
-    arguments = Macro.generate_arguments(arity, :Elixir)
+    arguments = Macro.generate_arguments(arity, :"Elixir")
+
     module =
       case module do
         [_head | _tail] = module -> module
@@ -97,12 +102,12 @@ defmodule MecksUnit do
 
     quote do
       fn unquote_splicing(arguments) ->
-
         mock_env = MecksUnit.Server.running(self())
         mock_module = Module.concat([mock_env, unquote_splicing(module)])
 
         arguments = [unquote_splicing(arguments)]
-        passthrough = fn(arguments) ->
+
+        passthrough = fn arguments ->
           :meck.passthrough(arguments)
         end
 
@@ -120,7 +125,6 @@ defmodule MecksUnit do
         else
           passthrough.(arguments)
         end
-
       end
     end
     |> Code.eval_quoted()
@@ -135,7 +139,7 @@ defmodule MecksUnit do
         arguments
         |> Enum.with_index()
         |> Enum.all?(fn {arg, index} ->
-          (arg == :_) || (Enum.at(args, index) == arg)
+          arg == :_ || Enum.at(args, index) == arg
         end)
       end
     end)
@@ -149,6 +153,7 @@ defmodule MecksUnit do
     |> Enum.reduce([], fn
       {^pid, {^module, ^func, _args}, _returned} = call, calls ->
         calls ++ [call]
+
       _, calls ->
         calls
     end)
