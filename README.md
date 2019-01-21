@@ -33,7 +33,7 @@ Also, non-matching function heads within the mock module will result in invoking
 As of version `0.1.2`, you can assert function calls using `called` (returns a boolean) or `assert_called` (raises an
 error when not having found a match) within your test block. Use `_` to match any argument as if you would pattern match.
 
-Prior to version `0.1.3`, you would very often get `:meck`-related compile errors when using MecksUnit in multiple test files.
+Prior to version `0.1.3`, you would very often get `:meck` related compile errors when using MecksUnit in multiple test files.
 From that version on, this problem is solved. Happy testing! ^^
 
 ### An example
