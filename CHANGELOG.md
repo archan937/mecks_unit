@@ -1,5 +1,10 @@
 ## MecksUnit CHANGELOG
 
+### Version 0.1.4 (January 22, 2019)
+
+* Accept extra pattern match argument for mocked_test
+* Improve efficiency when mocking modules
+
 ### Version 0.1.3 (January 21, 2019)
 
 * Solve `:meck` related compile errors when using MecksUnit in multiple test files (yay! ^^)
