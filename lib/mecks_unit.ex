@@ -7,10 +7,10 @@ defmodule MecksUnit do
       pattern
       |> Path.wildcard()
       |> Enum.map(&extract_mock_modules/1)
-      |> List.flatten()
-      |> Enum.uniq()
-      |> mock_modules()
     end)
+    |> List.flatten()
+    |> Enum.uniq()
+    |> mock_modules()
   end
 
   defp test_file_patterns do
