@@ -6,9 +6,14 @@ defmodule MecksUnit.BarTest do
     def wrap(:bar_test), do: ~w(MecksUnit Bar Test)
   end
 
-  mocked_test "parallel compiling" do
+  setup do
+    {:ok, %{conn: "<conn>"}}
+  end
+
+  mocked_test "parallel compiling", %{conn: conn} do
     task =
       Task.async(fn ->
+        assert "<conn>" = conn
         assert [:foo, :bar] == List.wrap([:foo, :bar])
         assert ~w(MecksUnit Bar Test) == List.wrap(:bar_test)
         assert called(List.wrap(:bar_test))

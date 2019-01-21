@@ -17,11 +17,13 @@ defmodule MecksUnit.Case do
     end
   end
 
-  defmacro mocked_test(message, block) do
+  defmacro mocked_test(message, pattern \\ nil, block) do
+    args = if pattern == nil, do: [message], else: [message, pattern]
+
     quote do
       MecksUnit.define_mocks(@mocks, __MODULE__, @mock_index)
 
-      test unquote(message) do
+      test unquote_splicing(args) do
         mock_env = Enum.join([__MODULE__, @mock_index])
         MecksUnit.Server.register_mock_env(self(), mock_env)
         unquote(block)
