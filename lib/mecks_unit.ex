@@ -73,24 +73,6 @@ defmodule MecksUnit do
     end)
   end
 
-  def define_mocks(mocks, test_module, mock_index) do
-    prefix = [Atom.to_string(test_module), mock_index, "."] |> Enum.join()
-
-    Enum.each(mocks, fn {mock_module, block} ->
-      original_module =
-        mock_module
-        |> Atom.to_string()
-        |> String.replace(prefix, "Elixir.")
-        |> String.to_atom()
-
-      if function_exported?(mock_module, :__info__, 1) do
-        IO.warn("Already defined mock module for #{original_module}")
-      else
-        Code.eval_quoted({:defmodule, [import: Kernel], [mock_module, [do: block]]})
-      end
-    end)
-  end
-
   defp to_mock_function(module, func, arity) do
     arguments = Macro.generate_arguments(arity, :"Elixir")
 
@@ -129,6 +111,24 @@ defmodule MecksUnit do
     end
     |> Code.eval_quoted()
     |> elem(0)
+  end
+
+  def define_mocks(mocks, test_module, mock_index) do
+    prefix = [Atom.to_string(test_module), mock_index, "."] |> Enum.join()
+
+    Enum.each(mocks, fn {mock_module, block} ->
+      original_module =
+        mock_module
+        |> Atom.to_string()
+        |> String.replace(prefix, "Elixir.")
+        |> String.to_atom()
+
+      if function_exported?(mock_module, :__info__, 1) do
+        IO.warn("Already defined mock module for #{original_module}")
+      else
+        Code.eval_quoted({:defmodule, [import: Kernel], [mock_module, [do: block]]})
+      end
+    end)
   end
 
   def called(module, func, arguments) do
