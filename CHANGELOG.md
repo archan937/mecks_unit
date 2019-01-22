@@ -1,5 +1,10 @@
 ## MecksUnit CHANGELOG
 
+### Version 0.1.5 (January 22, 2019)
+
+* Register mocked functions at `MecksUnit.Server`
+* Fix `ExCoveralls` related errors by unloading all mocked modules before calculating the test coverage (w00t!)
+
 ### Version 0.1.4 (January 22, 2019)
 
 * Accept extra pattern match argument for mocked_test
