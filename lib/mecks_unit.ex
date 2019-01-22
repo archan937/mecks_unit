@@ -12,6 +12,7 @@ defmodule MecksUnit do
       |> List.flatten()
       |> Enum.uniq()
 
+    MecksUnit.Unloader.register()
     MecksUnit.Server.register_mocked(functions)
 
     mock_functions(functions)
