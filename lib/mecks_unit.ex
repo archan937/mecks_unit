@@ -62,7 +62,7 @@ defmodule MecksUnit do
     ast
     |> List.wrap()
     |> Enum.map(fn {:def, _, [{func, _meta, args} | _tail]} ->
-      {module, func, length(args)}
+      {module, func, args |> List.wrap() |> length()}
     end)
   end
 

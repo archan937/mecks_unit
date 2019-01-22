@@ -6,12 +6,17 @@ defmodule MecksUnit.FooTest do
     def wrap(:foo_test), do: ~w(MecksUnit Foo Test)
   end
 
+  defmock Foo do
+    def bar, do: "what?!?"
+  end
+
   mocked_test "parallel compiling" do
     task =
       Task.async(fn ->
         assert [:foo, :bar] == List.wrap([:foo, :bar])
         assert ~w(MecksUnit Foo Test) == List.wrap(:foo_test)
         assert called(List.wrap(:foo_test))
+        assert "what?!?" == Foo.bar()
       end)
 
     Task.await(task)
