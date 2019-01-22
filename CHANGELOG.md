@@ -2,6 +2,7 @@
 
 ### Version 0.1.5 (January 22, 2019)
 
+* Fix error when trying to mock functions with arity 0
 * Register mocked functions at `MecksUnit.Server`
 * Fix `ExCoveralls` related errors by unloading all mocked modules before calculating the test coverage (w00t!)
 
