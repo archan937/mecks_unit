@@ -6,11 +6,11 @@ defmodule MecksUnit do
     |> Enum.map(fn pattern ->
       pattern
       |> Path.wildcard()
-      |> Enum.map(&extract_mock_modules/1)
+      |> Enum.map(&extract_mock_functions/1)
     end)
     |> List.flatten()
     |> Enum.uniq()
-    |> mock_modules()
+    |> mock_functions()
   end
 
   defp test_file_patterns do
@@ -31,9 +31,7 @@ defmodule MecksUnit do
     end)
   end
 
-  defp extract_mock_modules("test/test_helper.exs"), do: []
-
-  defp extract_mock_modules(file) do
+  defp extract_mock_functions(file) do
     file
     |> File.read!()
     |> Code.string_to_quoted!()
@@ -43,7 +41,7 @@ defmodule MecksUnit do
           mocked_functions =
             name
             |> Module.concat()
-            |> extract_mock_functions(block)
+            |> extract_function_heads(block)
 
           {node, acc ++ mocked_functions}
 
@@ -54,11 +52,11 @@ defmodule MecksUnit do
     |> elem(1)
   end
 
-  defp extract_mock_functions(module, {:__block__, [], ast}) do
-    extract_mock_functions(module, ast)
+  defp extract_function_heads(module, {:__block__, [], ast}) do
+    extract_function_heads(module, ast)
   end
 
-  defp extract_mock_functions(module, ast) do
+  defp extract_function_heads(module, ast) do
     ast
     |> List.wrap()
     |> Enum.map(fn {:def, _, [{func, _meta, args} | _tail]} ->
@@ -66,8 +64,8 @@ defmodule MecksUnit do
     end)
   end
 
-  defp mock_modules(modules) do
-    Enum.each(modules, fn {module, func, arity} ->
+  defp mock_functions(functions) do
+    Enum.each(functions, fn {module, func, arity} ->
       mock_function = to_mock_function(module, func, arity)
       :meck.expect(module, func, mock_function)
     end)
