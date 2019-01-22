@@ -8,6 +8,14 @@ defmodule MecksUnit.Server do
     GenServer.start_link(__MODULE__, :ok, name: __MODULE__)
   end
 
+  def register_mocked(mocked) do
+    GenServer.call(__MODULE__, {:register_mocked, mocked}, @timeout)
+  end
+
+  def mocked do
+    GenServer.call(__MODULE__, {:mocked}, @timeout)
+  end
+
   def register_mock_env(pid, mock_env) do
     GenServer.call(__MODULE__, {:register_mock_env, pid, mock_env}, @timeout)
   end
@@ -21,7 +29,15 @@ defmodule MecksUnit.Server do
   end
 
   def init(:ok) do
-    {:ok, %{running: %{}}}
+    {:ok, %{mocked: [], running: %{}}}
+  end
+
+  def handle_call({:register_mocked, mocked}, _from, state) do
+    {:reply, :ok, %{state | mocked: mocked}}
+  end
+
+  def handle_call({:mocked}, _from, %{mocked: mocked} = state) do
+    {:reply, mocked, state}
   end
 
   def handle_call({:register_mock_env, pid, mock_env}, _from, %{running: running} = state) do

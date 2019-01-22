@@ -2,15 +2,19 @@ defmodule MecksUnit do
   @moduledoc false
 
   def mock do
-    test_file_patterns()
-    |> Enum.map(fn pattern ->
-      pattern
-      |> Path.wildcard()
-      |> Enum.map(&extract_mock_functions/1)
-    end)
-    |> List.flatten()
-    |> Enum.uniq()
-    |> mock_functions()
+    functions =
+      test_file_patterns()
+      |> Enum.map(fn pattern ->
+        pattern
+        |> Path.wildcard()
+        |> Enum.map(&extract_mock_functions/1)
+      end)
+      |> List.flatten()
+      |> Enum.uniq()
+
+    MecksUnit.Server.register_mocked(functions)
+
+    mock_functions(functions)
   end
 
   defp test_file_patterns do
