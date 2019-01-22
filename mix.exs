@@ -16,7 +16,8 @@ defmodule MecksUnit.MixProject do
       docs: [
         main: "readme",
         extras: ["README.md"]
-      ]
+      ],
+      elixirc_options: [warnings_as_errors: true]
     ]
   end
 
