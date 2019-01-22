@@ -6,6 +6,7 @@ defmodule MecksUnit.MixProject do
       app: :mecks_unit,
       version: "0.1.4",
       elixir: "~> 1.6",
+      elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
       deps: deps(),
       description: description(),
@@ -46,4 +47,7 @@ defmodule MecksUnit.MixProject do
       links: %{github: "https://github.com/archan937/mecks_unit"}
     ]
   end
+
+  defp elixirc_paths(:test), do: ["lib", "test/modules"]
+  defp elixirc_paths(_), do: ["lib"]
 end

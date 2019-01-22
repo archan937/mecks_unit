@@ -1,9 +1,3 @@
-defmodule Foo do
-  def trim(string) do
-    String.trim(string)
-  end
-end
-
 defmodule MecksUnitTest do
   use ExUnit.Case, async: true
   use MecksUnit.Case
@@ -19,11 +13,16 @@ defmodule MecksUnitTest do
     def wrap(:foo), do: [1, 2, 3, 4]
   end
 
+  defmock Foo.Bar do
+    def baz(_), do: "Baz what?!?"
+  end
+
   mocked_test "using mocked module functions" do
     task =
       Task.async(fn ->
         assert "Engel" == String.trim("  Paul  ")
         assert "Engel" == Foo.trim("  Paul  ")
+        assert "Baz what?!?" == Foo.Bar.baz("Paul")
         assert "Bar" == String.trim("  Foo  ", "!")
         assert "  Surprise!  " == String.trim("  Paul  ", "!")
         assert "MecksUnit" == String.trim("  MecksUnit  ")
@@ -43,6 +42,7 @@ defmodule MecksUnitTest do
       Task.async(fn ->
         assert "Paul" == String.trim("  Paul  ")
         assert "Paul" == Foo.trim("  Paul  ")
+        assert "Paul!!!" == Foo.Bar.baz("Paul")
         assert "  Foo  " == String.trim("  Foo  ", "!")
         assert "  Paul  " == String.trim("  Paul  ", "!")
         assert "MecksUnit" == String.trim("  MecksUnit  ")
@@ -70,6 +70,7 @@ defmodule MecksUnitTest do
       Task.async(fn ->
         assert "PAUL :)" == String.trim("  Paul  ")
         assert "PAUL :)" == Foo.trim("  Paul  ")
+        assert "Paul!!!" == Foo.Bar.baz("Paul")
         assert "  Foo  " == String.trim("  Foo  ", "!")
         assert "  Paul  " == String.trim("  Paul  ", "!")
         assert "MecksUnit" == String.trim("  MecksUnit  ")
