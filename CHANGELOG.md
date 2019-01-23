@@ -1,5 +1,9 @@
 ## MecksUnit CHANGELOG
 
+### Version 0.1.6 (January 24, 2019)
+
+* Tackle possible not mocked error when unloading modules
+
 ### Version 0.1.5 (January 22, 2019)
 
 * Fix error when trying to mock functions with arity 0
