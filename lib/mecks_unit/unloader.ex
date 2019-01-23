@@ -18,7 +18,13 @@ defmodule MecksUnit.Unloader do
     MecksUnit.Server.mocked()
     |> Enum.map(fn {module, _func, _arity} -> module end)
     |> Enum.uniq()
-    |> Enum.each(&:meck.unload/1)
+    |> Enum.each(fn module ->
+      try do
+        if :meck.validate(module), do: :meck.unload(module)
+      rescue
+        ErlangError -> :ok
+      end
+    end)
 
     {:noreply, config}
   end
