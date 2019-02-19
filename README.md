@@ -1,4 +1,4 @@
-# MecksUnit
+# MecksUnit [![Build Status](https://travis-ci.org/archan937/mecks_unit.svg?branch=master)](https://travis-ci.org/archan937/mecks_unit)
 
 A simple Elixir package to elegantly mock module functions within (asynchronous) ExUnit tests using Erlang's `:meck` library
 
