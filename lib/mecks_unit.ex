@@ -119,7 +119,18 @@ defmodule MecksUnit do
   def define_mocks(mocks, test_module, mock_index) do
     prefix = [Atom.to_string(test_module), mock_index, "."] |> Enum.join()
 
-    Enum.each(mocks, fn {mock_module, block} ->
+    mocks
+    |> Enum.map(fn {mock_module, block} ->
+      mock_module =
+        mock_module
+        |> Atom.to_string()
+        |> String.replace("__INDEX__", Integer.to_string(mock_index))
+        |> String.to_atom()
+
+      {mock_module, block}
+    end)
+    |> Keyword.new()
+    |> Enum.each(fn {mock_module, block} ->
       original_module =
         mock_module
         |> Atom.to_string()

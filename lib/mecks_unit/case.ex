@@ -2,18 +2,29 @@ defmodule MecksUnit.Case do
   defmacro __using__(_opts) do
     quote do
       import MecksUnit.Case
+      Module.register_attribute(__MODULE__, :preserved_mocks, accumulate: true, persist: false)
       Module.register_attribute(__MODULE__, :mocks, accumulate: true, persist: false)
       @mock_index 0
     end
   end
 
-  defmacro defmock({_alias, _meta, name}, do: block) do
-    quote do
-      name =
-        Module.concat([Enum.join([__MODULE__, @mock_index]), unquote_splicing(List.wrap(name))])
+  defmacro defmock({_alias, _meta, name}, options \\ [], block) do
+    preserve = Keyword.get(options, :preserve)
 
+    quote do
+      postfix = if unquote(preserve), do: "__INDEX__", else: @mock_index
+
+      name = Module.concat([
+        Enum.join([__MODULE__, postfix]),
+        unquote_splicing(List.wrap(name))
+      ])
       block = unquote(Macro.escape(block))
-      @mocks {name, block}
+
+      if unquote(preserve) do
+        @preserved_mocks {name, block}
+      else
+        @mocks {name, block}
+      end
     end
   end
 
@@ -21,7 +32,7 @@ defmodule MecksUnit.Case do
     args = if pattern == nil, do: [message], else: [message, pattern]
 
     quote do
-      MecksUnit.define_mocks(@mocks, __MODULE__, @mock_index)
+      MecksUnit.define_mocks(Enum.reverse(@preserved_mocks) ++ @mocks, __MODULE__, @mock_index)
 
       test unquote_splicing(args) do
         mock_env = Enum.join([__MODULE__, @mock_index])
