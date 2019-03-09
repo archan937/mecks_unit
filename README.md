@@ -11,7 +11,7 @@ To install MecksUnit, please do the following:
       ```elixir
       def deps do
         [
-          {:mecks_unit, "~> 0.1.6", only: :test}
+          {:mecks_unit, "~> 0.1.7", only: :test}
         ]
       end
       ```
@@ -36,7 +36,54 @@ error when not having found a match) within your test block. Use `_` to match an
 Prior to version `0.1.3`, you would very often get `:meck` related compile errors when using MecksUnit in multiple test files.
 From that version on, this problem is solved. Happy testing! ^^
 
-### An example
+### Define mock module for entire test case
+
+As of version `0.1.7`, you can "preserve" a mocked module definition for the rest of the test case by adding `preserve: true`.
+
+  ```elixir
+  defmock List, preserve: true do
+    def wrap(:foo), do: [1, 2, 3, 4]
+  end
+  ```
+
+This behaviour is intended to be implemented as natural as possible. Therefore, you can override a preserved mock module once
+just by inserting a "regular" mock module definition:
+
+  ```elixir
+  defmock List, preserve: true do
+    def wrap(:foo), do: [1, 2, 3, 4]
+  end
+
+  # mocked tests ...
+
+  defmock List do
+    def wrap(:foo), do: ["this only applies to the next `mocked_test`"]
+  end
+  ```
+
+Also, you can override a preserved mock module for the rest of the test case by using `preserve: true` again.
+
+  ```elixir
+  defmock List, preserve: true do
+    def wrap(:foo), do: [1, 2, 3, 4]
+  end
+
+  # mocked tests ...
+
+  defmock List do
+    def wrap(:foo), do: ["this only applies to the next `mocked_test`"]
+  end
+
+  # mocked tests ...
+
+  defmock List, preserve: true do
+    def wrap(:foo), do: [5, 6, 7, 8]
+  end
+  ```
+
+Please note that this behaviour is also tested in [test/mecks_unit/preserve_test.exs](https://github.com/archan937/mecks_unit/blob/master/test/mecks_unit/preserve_test.exs).
+
+### A full example
 
 The following is a working example defined in [test/mecks_unit_test.exs](https://github.com/archan937/mecks_unit/blob/master/test/mecks_unit_test.exs)
 

@@ -1,5 +1,9 @@
 ## MecksUnit CHANGELOG
 
+### Version 0.1.7 (March 9, 2019)
+
+* Add ability to "preserve" mock module definitions through out test case using `preserve: true` (feature request by @aalepis)
+
 ### Version 0.1.6 (January 24, 2019)
 
 * Tackle possible not mocked error when unloading modules
