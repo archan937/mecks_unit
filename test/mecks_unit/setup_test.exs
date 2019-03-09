@@ -1,4 +1,4 @@
-defmodule MecksUnit.BarTest do
+defmodule MecksUnit.SetupTest do
   use ExUnit.Case, async: true
   use MecksUnit.Case
 
