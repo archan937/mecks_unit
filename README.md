@@ -11,7 +11,7 @@ To install MecksUnit, please do the following:
       ```elixir
       def deps do
         [
-          {:mecks_unit, "~> 0.1.7", only: :test}
+          {:mecks_unit, "~> 0.1.8", only: :test}
         ]
       end
       ```
@@ -38,7 +38,7 @@ From that version on, this problem is solved. Happy testing! ^^
 
 ### Define mock module for entire test case
 
-As of version `0.1.7`, you can "preserve" a mocked module definition for the rest of the test case by adding `preserve: true`.
+As of version `0.1.8`, you can "preserve" a mocked module definition for the rest of the test case by adding `preserve: true`.
 
   ```elixir
   defmock List, preserve: true do

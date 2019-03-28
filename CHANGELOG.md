@@ -1,5 +1,9 @@
 ## MecksUnit CHANGELOG
 
+### Version 0.1.8 (March 29, 2019)
+
+* Fix extracting preserved mock functions (thanks for reporting @naag)
+
 ### Version 0.1.7 (March 9, 2019)
 
 * Add ability to "preserve" mock module definitions through out test case using `preserve: true` (feature request by @aalepis)
