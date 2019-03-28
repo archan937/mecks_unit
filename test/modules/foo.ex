@@ -4,4 +4,5 @@ defmodule Foo do
   end
 
   def bar, do: "baz"
+  def bar(x), do: x
 end

@@ -37,18 +37,25 @@ defmodule MecksUnit do
   end
 
   defp extract_mock_functions(file) do
+    extract_functions = fn node, name, block, acc ->
+      mocked_functions =
+        name
+        |> Module.concat()
+        |> extract_function_heads(block)
+
+      {node, acc ++ mocked_functions}
+    end
+
     file
     |> File.read!()
     |> Code.string_to_quoted!()
     |> Macro.traverse([], fn node, acc -> {node, acc} end, fn node, acc ->
       case node do
         {:defmock, _, [{:__aliases__, _meta, name}, [do: block]]} ->
-          mocked_functions =
-            name
-            |> Module.concat()
-            |> extract_function_heads(block)
+          extract_functions.(node, name, block, acc)
 
-          {node, acc ++ mocked_functions}
+        {:defmock, _, [{:__aliases__, _meta, name}, [preserve: true], [do: block]]} ->
+          extract_functions.(node, name, block, acc)
 
         node ->
           {node, acc}
