@@ -22,7 +22,7 @@ defmodule MecksUnit do
     System.argv()
     |> Enum.slice(1..-1)
     |> case do
-      [] -> ["test/**/*.exs"]
+      [] -> ["test/**/*.exs", "apps/*/test/**/*.exs"]
       patterns -> patterns
     end
     |> Enum.map(fn pattern ->
