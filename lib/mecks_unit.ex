@@ -19,21 +19,7 @@ defmodule MecksUnit do
   end
 
   defp test_file_patterns do
-    System.argv()
-    |> Enum.slice(1..-1)
-    |> case do
-      [] -> ["test/**/*.exs"]
-      patterns -> patterns
-    end
-    |> Enum.map(fn pattern ->
-      pattern = Regex.replace(~r/\.exs:\d*/, pattern, ".exs")
-
-      if String.contains?(pattern, ".exs") do
-        pattern
-      else
-        pattern <> "**/*.exs"
-      end
-    end)
+    ["test/**/*.exs"]
   end
 
   defp extract_mock_functions(file) do
@@ -54,7 +40,7 @@ defmodule MecksUnit do
         {:defmock, _, [{:__aliases__, _meta, name}, [do: block]]} ->
           extract_functions.(node, name, block, acc)
 
-        {:defmock, _, [{:__aliases__, _meta, name}, [preserve: true], [do: block]]} ->
+        {:defmock, _, [{:__aliases__, _meta, name}, _, [do: block]]} ->
           extract_functions.(node, name, block, acc)
 
         node ->
@@ -71,9 +57,12 @@ defmodule MecksUnit do
   defp extract_function_heads(module, ast) do
     ast
     |> List.wrap()
-    |> Enum.map(fn {:def, _, [{func, _meta, args} | _tail]} ->
-      {module, func, args |> List.wrap() |> length()}
+    |> Enum.map(fn
+      {:def, _, [{func, _meta, args} | _tail]} ->
+        {module, func, args |> List.wrap() |> length()}
+        _ -> nil ## for mofule attributes
     end)
+    |> Enum.filter(&(&1 != nil))
   end
 
   defp mock_functions(functions) do
