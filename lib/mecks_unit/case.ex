@@ -10,8 +10,8 @@ defmodule MecksUnit.Case do
   end
 
   defmacro defmock({_alias, _meta, name}, options \\ [], block) do
-    preserve = Keyword.get(options, :preserve)
     as = Keyword.get(options, :as)
+    preserve = Keyword.get(options, :preserve) || !is_nil(as)
     attributes = Keyword.get(options, :attributes)
 
     quote do
