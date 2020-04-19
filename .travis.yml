@@ -1,22 +1,39 @@
 language: elixir
-sudo: false
+
+os:
+  - linux
+
 elixir:
-  - 1.6.3
-  - 1.7.4
-  - 1.8.0
+  - 1.9
+  - 1.8
+  - 1.7
+  - 1.6
+
 otp_release:
-  - 19.0
-  - 20.1
-  - 21.2
+  - 22.0
+  - 19.3
+  - 18.3
+
 matrix:
   exclude:
-    - elixir: 1.6.3
-      otp_release: 21.2
-    - elixir: 1.8.0
+    - elixir: 1.9
+      otp_release: 19.3
+    - elixir: 1.9
       otp_release: 18.3
-    - elixir: 1.8.0
-      otp_release: 19.0
+    - elixir: 1.8
+      otp_release: 19.3
+    - elixir: 1.8
+      otp_release: 18.3
+    - elixir: 1.7
+      otp_release: 18.3
+    - elixir: 1.6
+      otp_release: 22.0
+    - elixir: 1.6
+      otp_release: 18.3
+
 before_script:
   - mix local.hex --force
+  - mix local.rebar --force
   - mix deps.get --only test
-script: mix test
+
+script: mix test --trace
