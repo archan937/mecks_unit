@@ -23,6 +23,10 @@ defmodule MecksUnit do
   defp test_file_patterns do
     System.argv()
     |> Enum.slice(1..-1)
+    |> Enum.filter(fn string ->
+      String.contains?(string, ".exs") or
+      Path.wildcard(string <> "/**/*.exs") != []
+    end)
     |> case do
       [] -> ["test/**/*.exs"]
       patterns -> patterns
