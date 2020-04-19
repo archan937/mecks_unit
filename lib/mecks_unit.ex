@@ -1,6 +1,8 @@
 defmodule MecksUnit do
   @moduledoc false
 
+  require :elixir_module
+
   def mock do
     functions =
       test_file_patterns()
@@ -123,7 +125,7 @@ defmodule MecksUnit do
     |> elem(0)
   end
 
-  def define_mocks(mocks, test_module, mock_index) do
+  def define_mocks(mocks, test_module, mock_index, caller) do
     prefix = [Atom.to_string(test_module), mock_index, "."] |> Enum.join()
 
     mocks
@@ -147,8 +149,34 @@ defmodule MecksUnit do
       if function_exported?(mock_module, :__info__, 1) do
         IO.warn("Already defined mock module for #{original_module}")
       else
+        block = interpolate_modules_attributes(block, caller)
         Code.eval_quoted({:defmodule, [import: Kernel], [mock_module, [do: block]]})
       end
+    end)
+  end
+
+  defp interpolate_modules_attributes(ast, caller) do
+    table =
+      if function_exported?(:elixir_module, :data_table, 1) do
+        apply(:elixir_module, :data_table, [caller])
+      else
+        {set, _bag} = apply(:elixir_module, :data_tables, [caller])
+        set
+      end
+
+    Macro.postwalk(ast, fn
+      {:@, _, [{key, _, nil}]} ->
+        [^key, val] =
+          table
+          |> :ets.lookup(key)
+          |> hd()
+          |> Tuple.to_list()
+          |> Enum.slice(0, 2)
+
+        quote do
+          unquote(val)
+        end
+      quoted -> quoted
     end)
   end
 

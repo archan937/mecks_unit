@@ -2,6 +2,8 @@ defmodule MecksUnitTest do
   use ExUnit.Case, async: true
   use MecksUnit.Case
 
+  @uuid "abc123"
+
   defmock String do
     def trim("  Paul  "), do: "Engel"
     def trim("  Foo  ", "!"), do: "Bar"
@@ -10,6 +12,7 @@ defmodule MecksUnitTest do
   end
 
   defmock List do
+    def wrap(@uuid), do: 'abc123'
     def wrap(:foo), do: [1, 2, 3, 4]
   end
 
@@ -31,6 +34,8 @@ defmodule MecksUnitTest do
         assert [] == List.wrap(nil)
         assert [:bar] == List.wrap(:bar)
         assert [:foo, :bar] == List.wrap([:foo, :bar])
+        assert 'abc123' == List.wrap("abc123")
+        assert 'abc123' == List.wrap(@uuid)
         assert called(List.wrap(:foo))
       end)
 

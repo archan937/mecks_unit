@@ -30,9 +30,10 @@ defmodule MecksUnit.Case do
 
   defmacro mocked_test(message, pattern \\ nil, block) do
     args = if pattern == nil, do: [message], else: [message, pattern]
+    caller = __CALLER__.module
 
     quote do
-      MecksUnit.define_mocks(Enum.reverse(@preserved_mocks) ++ @mocks, __MODULE__, @mock_index)
+      MecksUnit.define_mocks(Enum.reverse(@preserved_mocks) ++ @mocks, __MODULE__, @mock_index, unquote(caller))
 
       test unquote_splicing(args) do
         mock_env = Enum.join([__MODULE__, @mock_index])
