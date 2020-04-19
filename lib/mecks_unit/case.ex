@@ -2,8 +2,17 @@ defmodule MecksUnit.Case do
   defmacro __using__(_opts) do
     quote do
       import MecksUnit.Case
-      Module.register_attribute(__MODULE__, :preserved_mocks, accumulate: true, persist: false)
-      Module.register_attribute(__MODULE__, :mocks, accumulate: true, persist: false)
+
+      Module.register_attribute(__MODULE__, :preserved_mocks,
+        accumulate: true,
+        persist: false
+      )
+
+      Module.register_attribute(__MODULE__, :mocks,
+        accumulate: true,
+        persist: false
+      )
+
       @mock_index 0
     end
   end
@@ -14,10 +23,12 @@ defmodule MecksUnit.Case do
     quote do
       postfix = if unquote(preserve), do: "__INDEX__", else: @mock_index
 
-      name = Module.concat([
-        Enum.join([__MODULE__, postfix]),
-        unquote_splicing(List.wrap(name))
-      ])
+      name =
+        Module.concat([
+          Enum.join([__MODULE__, postfix]),
+          unquote_splicing(List.wrap(name))
+        ])
+
       block = unquote(Macro.escape(block))
 
       if unquote(preserve) do
@@ -33,7 +44,12 @@ defmodule MecksUnit.Case do
     caller = __CALLER__.module
 
     quote do
-      MecksUnit.define_mocks(Enum.reverse(@preserved_mocks) ++ @mocks, __MODULE__, @mock_index, unquote(caller))
+      MecksUnit.define_mocks(
+        Enum.reverse(@preserved_mocks) ++ @mocks,
+        __MODULE__,
+        @mock_index,
+        unquote(caller)
+      )
 
       test unquote_splicing(args) do
         mock_env = Enum.join([__MODULE__, @mock_index])
@@ -49,7 +65,11 @@ defmodule MecksUnit.Case do
 
   defmacro called({{:., _, [module, func]}, _, args}) do
     quote do
-      MecksUnit.called(unquote(module), unquote(func), unquote(replace_ignore_pattern(args)))
+      MecksUnit.called(
+        unquote(module),
+        unquote(func),
+        unquote(replace_ignore_pattern(args))
+      )
     end
   end
 
@@ -72,7 +92,10 @@ defmodule MecksUnit.Case do
           end)
 
         raise ExUnit.AssertionError,
-          message: "Expected call but did not receive it. Calls which were received:\n#{calls}"
+          message:
+            "Expected call but did not receive it. Calls which were received:\n#{
+              calls
+            }"
       end
     end
   end

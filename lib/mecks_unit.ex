@@ -25,7 +25,7 @@ defmodule MecksUnit do
     |> Enum.slice(1..-1)
     |> Enum.filter(fn string ->
       String.contains?(string, ".exs") or
-      Path.wildcard(string <> "/**/*.exs") != []
+        Path.wildcard(string <> "/**/*.exs") != []
     end)
     |> case do
       [] -> ["test/**/*.exs"]
@@ -60,7 +60,8 @@ defmodule MecksUnit do
         {:defmock, _, [{:__aliases__, _meta, name}, [do: block]]} ->
           extract_functions.(node, name, block, acc)
 
-        {:defmock, _, [{:__aliases__, _meta, name}, [preserve: true], [do: block]]} ->
+        {:defmock, _,
+         [{:__aliases__, _meta, name}, [preserve: true], [do: block]]} ->
           extract_functions.(node, name, block, acc)
 
         node ->
@@ -109,7 +110,8 @@ defmodule MecksUnit do
           :meck.passthrough(arguments)
         end
 
-        if mock_env && function_exported?(mock_module, unquote(func), unquote(arity)) do
+        if mock_env &&
+             function_exported?(mock_module, unquote(func), unquote(arity)) do
           try do
             case apply(mock_module, unquote(func), arguments) do
               {:passthrough, arguments} -> passthrough.(arguments)
@@ -154,7 +156,10 @@ defmodule MecksUnit do
         IO.warn("Already defined mock module for #{original_module}")
       else
         block = interpolate_modules_attributes(block, caller)
-        Code.eval_quoted({:defmodule, [import: Kernel], [mock_module, [do: block]]})
+
+        Code.eval_quoted(
+          {:defmodule, [import: Kernel], [mock_module, [do: block]]}
+        )
       end
     end)
   end
@@ -180,7 +185,9 @@ defmodule MecksUnit do
         quote do
           unquote(val)
         end
-      quoted -> quoted
+
+      quoted ->
+        quoted
     end)
   end
 

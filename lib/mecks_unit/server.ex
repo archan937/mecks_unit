@@ -40,12 +40,20 @@ defmodule MecksUnit.Server do
     {:reply, mocked, state}
   end
 
-  def handle_call({:register_mock_env, pid, mock_env}, _from, %{running: running} = state) do
+  def handle_call(
+        {:register_mock_env, pid, mock_env},
+        _from,
+        %{running: running} = state
+      ) do
     running = Map.put(running, pid, mock_env)
     {:reply, :ok, %{state | running: running}}
   end
 
-  def handle_call({:unregister_mock_env, pid}, _from, %{running: running} = state) do
+  def handle_call(
+        {:unregister_mock_env, pid},
+        _from,
+        %{running: running} = state
+      ) do
     running = Map.delete(running, pid)
     {:reply, :ok, %{state | running: running}}
   end

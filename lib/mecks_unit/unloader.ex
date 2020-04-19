@@ -4,7 +4,9 @@ defmodule MecksUnit.Unloader do
   use GenServer
 
   def register do
-    formatters = Keyword.get(ExUnit.configuration(), :formatters, []) ++ [__MODULE__]
+    formatters =
+      Keyword.get(ExUnit.configuration(), :formatters, []) ++ [__MODULE__]
+
     ExUnit.configure(formatters: formatters)
   end
 
