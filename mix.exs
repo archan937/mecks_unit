@@ -1,10 +1,12 @@
 defmodule MecksUnit.MixProject do
   use Mix.Project
 
+  @version "0.1.8"
+
   def project do
     [
       app: :mecks_unit,
-      version: "0.1.8",
+      version: @version,
       elixir: "~> 1.6",
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
@@ -12,10 +14,11 @@ defmodule MecksUnit.MixProject do
       description: description(),
       package: package(),
       name: "MecksUnit",
-      source_url: "https://github.com/archan937/mecks_unit",
       docs: [
         main: "readme",
-        extras: ["README.md"]
+        extras: ["README.md"],
+        source_ref: "v#{@version}",
+        source_url: "https://github.com/archan937/mecks_unit"
       ],
       elixirc_options: [warnings_as_errors: true]
     ]
@@ -31,7 +34,7 @@ defmodule MecksUnit.MixProject do
   defp deps do
     [
       {:meck, "~> 0.8.8"},
-      {:ex_doc, "~> 0.18.0", only: :dev, runtime: false}
+      {:ex_doc, "~> 0.19", only: :dev, runtime: false}
     ]
   end
 
