@@ -11,7 +11,7 @@ To install MecksUnit, please do the following:
       ```elixir
       def deps do
         [
-          {:mecks_unit, "~> 0.1.8", only: :test}
+          {:mecks_unit, "~> 0.1.9", only: :test}
         ]
       end
       ```
@@ -167,7 +167,7 @@ Unlike [Mock](https://github.com/jjh42/mock), MecksUnit supports running mocked 
 
 ## License
 
-Copyright (c) 2019 Paul Engel, released under the MIT License
+Copyright (c) 2020 Paul Engel, released under the MIT License
 
 http://github.com/archan937 – http://twitter.com/archan937 – pm_engel@icloud.com
 

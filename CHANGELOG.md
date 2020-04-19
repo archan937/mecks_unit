@@ -1,5 +1,10 @@
 ## MecksUnit CHANGELOG
 
+### Version 0.1.9 (April 19, 2020)
+
+* Interpolate module attributes into mocked modules (thanks for reporting @Kintull)
+* Ignore non-path arguments when running tests (thanks for reporting @hrubi)
+
 ### Version 0.1.8 (March 29, 2019)
 
 * Fix extracting preserved mock functions (thanks for reporting @naag)
